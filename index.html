@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Reestruturação do Trello - Grupo Lazari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-body: #0a0a0a;
+            --bg-slide: #121212;
+            --bg-element: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --text-heading: #ffffff;
+            --lazari-red: #D32F2F;
+            --lazari-red-glow: rgba(211, 47, 47, 0.15);
+            --accent-green: #4CAF50;
+            --border-color: #333333;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-body);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: clamp(10px, 4vw, 40px) 10px;
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-main);
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            overflow-x: hidden;
+        }
+
+        .slide {
+            background-color: var(--bg-slide);
+            width: 100%;
+            max-width: 1280px;
+            min-height: 720px;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 0 1px var(--border-color);
+            position: relative;
+            overflow: hidden;
+            padding: clamp(30px, 5vw, 60px);
+            padding-bottom: 80px; /* Espaço para marca d'água */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slide::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: linear-gradient(90deg, var(--lazari-red) 0%, #ff5252 100%);
+        }
+
+        .watermark {
+            position: absolute; bottom: 25px; right: clamp(20px, 4vw, 35px);
+            display: flex; align-items: center; gap: 10px; opacity: 0.5;
+            font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: clamp(12px, 2vw, 16px);
+            letter-spacing: 1px; color: var(--text-muted);
+        }
+        .watermark img { height: clamp(30px, 4vw, 60px); object-fit: contain; }
+
+        .slide-number {
+            position: absolute; bottom: 25px; left: clamp(20px, 4vw, 60px);
+            font-family: 'Montserrat', sans-serif; font-size: clamp(12px, 2vw, 14px);
+            font-weight: 600; color: var(--text-muted);
+        }
+
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; color: var(--text-heading); margin-bottom: 20px; }
+
+        .slide-title {
+            font-size: clamp(22px, 4vw, 36px); font-weight: 700; margin-bottom: 30px; 
+            padding-bottom: 15px; border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; gap: 15px; line-height: 1.3;
+        }
+        .slide-title i { color: var(--lazari-red); }
+
+        p, li { font-size: clamp(16px, 2.5vw, 18px); line-height: 1.6; }
+
+        .grid-cards { display: grid; gap: 20px; width: 100%; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-5 { grid-template-columns: repeat(5, 1fr); }
+
+        .two-cols { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 4vw, 50px); align-items: center; flex-grow: 1; }
+
+        .card {
+            background-color: var(--bg-element); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 25px 20px; text-align: center;
+            transition: transform 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .card i { font-size: 32px; color: var(--lazari-red); margin-bottom: 15px; }
+        .card h3 { font-size: 18px; margin-bottom: 10px; }
+        .card p { font-size: 13px; color: var(--text-muted); }
+
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; border: 1px solid var(--border-color); }
+        table { width: 100%; min-width: 650px; border-collapse: collapse; background-color: rgba(255, 255, 255, 0.02); }
+        th { background-color: rgba(211, 47, 47, 0.1); color: var(--text-heading); font-family: 'Montserrat', sans-serif; font-weight: 600; text-align: left; padding: 15px; border-bottom: 2px solid var(--lazari-red); }
+        td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); font-size: 15px; }
+        tr:nth-child(even) { background-color: rgba(255, 255, 255, 0.04); }
+
+        .image-box {
+            background-color: var(--bg-element); border: 1px solid var(--border-color);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; width: 100%; height: auto; aspect-ratio: 16/9;
+        }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: opacity 0.3s; }
+
+        .flow-container {
+            display: flex; align-items: center; justify-content: space-between; width: 100%; 
+            margin-top: 40px; padding: 30px; background-color: var(--bg-element);
+            border-radius: 12px; border: 1px solid var(--border-color);
+        }
+        .flow-step {
+            background-color: var(--bg-slide); border: 2px solid var(--lazari-red); color: var(--text-heading);
+            padding: 15px; border-radius: 8px; font-weight: bold; font-family: 'Montserrat', sans-serif;
+            text-align: center; flex: 1; min-width: 120px; max-width: 180px; box-shadow: 0 5px 15px var(--lazari-red-glow);
+        }
+        .flow-arrow { color: var(--lazari-red); font-size: 24px; }
+
+        .highlight { color: var(--lazari-red); font-weight: bold; }
+        .tag-red { display: inline-block; background-color: var(--lazari-red); color: white; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; margin-bottom: 10px; }
+
+        .numbered-list { list-style: none; counter-reset: my-counter; }
+        .numbered-list li { counter-increment: my-counter; margin-bottom: 20px; padding-left: 50px; position: relative; font-size: clamp(16px, 3vw, 18px); }
+        .numbered-list li::before {
+            content: counter(my-counter); position: absolute; left: 0; top: -2px;
+            background-color: var(--lazari-red); color: white; width: 35px; height: 35px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-family: 'Montserrat', sans-serif;
+        }
+
+        .cover-slide { justify-content: center; align-items: center; text-align: center; }
+        .cover-logo { margin-bottom: 30px; }
+        .cover-logo img { height: clamp(60px, 10vw, 100px); max-width: 100%; object-fit: contain; }
+        .cover-subtitle { font-size: clamp(16px, 2.5vw, 24px); color: var(--text-muted); margin-top: 20px; max-width: 800px; }
+        .cover-footer { margin-top: clamp(40px, 8vw, 80px); font-size: clamp(12px, 2vw, 16px); color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; line-height: 1.8; }
+
+        .btn-print {
+            position: fixed; top: 20px; right: 20px; background-color: var(--lazari-red);
+            color: white; border: none; padding: 12px 20px; font-size: 16px;
+            font-family: 'Montserrat', sans-serif; font-weight: bold; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4); z-index: 1000; transition: 0.2s;
+        }
+        .btn-print:hover { transform: scale(1.05); background-color: #b71c1c; }
+
+        @media (max-width: 768px) {
+            .slide { 
+                padding: 30px 20px 80px 20px; 
+                min-height: auto; height: auto; /* Permite que o slide cresça o necessário no mobile */
+            }
+            h1 { font-size: clamp(28px, 8vw, 40px) !important; }
+            h2 { font-size: clamp(22px, 6vw, 30px) !important; }
+            
+            /* Empilhando colunas */
+            .two-cols { grid-template-columns: 1fr; gap: 30px; }
+            .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; gap: 15px; }
+            
+            /* Fluxo de trabalho vertical no celular */
+            .flow-container { flex-direction: column; padding: 20px; gap: 10px; }
+            .flow-arrow { transform: rotate(90deg); margin: 5px 0; }
+            .flow-step { max-width: 100%; width: 100%; }
+            
+            .image-box { aspect-ratio: auto; min-height: 220px; max-height: 300px; }
+            
+            .btn-print { top: auto; bottom: 15px; right: 15px; padding: 10px 15px; font-size: 14px; box-shadow: 0 -4px 15px rgba(0,0,0,0.5); }
+            
+            .cover-slide { padding-top: 60px; }
+        }
+
+        @page { size: 1280px 720px; margin: 0; }
+        @media print {
+            body { background-color: var(--bg-slide) !important; padding: 0; margin: 0; width: 1280px; }
+            .slide { 
+                margin: 0; padding: 60px !important; width: 1280px !important; height: 720px !important; 
+                min-height: 720px !important; page-break-after: always; page-break-inside: avoid; 
+                box-shadow: none !important; border: none !important; border-radius: 0 !important; 
+            }
+            .no-print { display: none !important; }
+            
+            /* Força Grids Originais no PDF ignorando o Mobile */
+            .two-cols { grid-template-columns: 1fr 1fr !important; }
+            .grid-cards.grid-5 { grid-template-columns: repeat(5, 1fr) !important; }
+            .grid-cards.grid-4 { grid-template-columns: repeat(4, 1fr) !important; }
+            .grid-cards.grid-3 { grid-template-columns: repeat(3, 1fr) !important; }
+            .grid-cards.grid-2 { grid-template-columns: repeat(2, 1fr) !important; }
+            
+            .flow-container { flex-direction: row !important; }
+            .flow-arrow { transform: rotate(0deg) !important; }
+            .flow-step { max-width: 180px !important; }
+            
+            .table-responsive { overflow: visible !important; border: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botão de Exportação -->
+    <button class="btn-print no-print" onclick="window.print()"><i class="fa-solid fa-print"></i> PDF</button>
+
+    <div class="slide cover-slide">
+        <div class="cover-logo">
+            <img src="/img/lazari.png" alt="Logo Grupo Lazari">
+        </div>
+        <h1 style="font-size: clamp(35px, 5vw, 55px); margin-bottom: 10px;">PROPOSTA ESTRUTURAL</h1>
+        <h2 style="font-size: clamp(24px, 4vw, 40px); color: var(--lazari-red);">Reestruturação do Trello</h2>
+        <p class="cover-subtitle">Organização por setores, controle de qualidade e rastreabilidade total.</p>
+        
+        <div class="cover-footer">
+            16/07/2026 | GRUPO LAZARI<br>
+            <span style="color: #ffffff; font-weight: bold; font-size: 1.1em; display: block; margin-top: 5px;">Luiz Mateus Sanches de Oliveira</span>
+        </div>
+    </div>
+
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-microscope"></i> Diagnóstico: Problemas Atuais</h2>
+        <div class="grid-cards grid-4" style="flex-grow: 1;">
+            <div class="card"><i class="fa-solid fa-sitemap"></i><h3>Desorganização</h3><p>Setores num único quadro.</p></div>
+            <div class="card"><i class="fa-solid fa-user-pen"></i><h3>Edição Indevida</h3><p>Cards alterados por terceiros.</p></div>
+            <div class="card"><i class="fa-solid fa-rotate-left"></i><h3>Retrabalho</h3><p>Correções sistêmicas constantes.</p></div>
+            <div class="card"><i class="fa-solid fa-chart-line" style="transform: scaleY(-1);"></i><h3>Curva de Aprendizado</h3><p>Caos para novatos.</p></div>
+            <div class="card"><i class="fa-solid fa-ghost"></i><h3>Perda de Contexto</h3><p>Demandas perdidas no fluxo.</p></div>
+            <div class="card"><i class="fa-solid fa-dumpster"></i><h3>Poluição Visual</h3><p>Cards finalizados acumulados.</p></div>
+            <div class="card"><i class="fa-solid fa-file-circle-xmark"></i><h3>Falta de Dados</h3><p>CS não preenche tudo.</p></div>
+            <div class="card"><i class="fa-solid fa-eye-slash"></i><h3>Falta de Visão</h3><p>Gestão sem métricas.</p></div>
+        </div>
+        <div class="slide-number">02</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-lightbulb"></i> A Solução Proposta (Visão Geral)</h2>
+        <div class="two-cols">
+            <div>
+                <h3 style="color: var(--lazari-red); font-size: 28px;">Nova Estrutura (9 Quadros)</h3>
+                <ul style="list-style: none; margin-top: 20px;">
+                    <li style="margin-bottom: 20px;"><i class="fa-solid fa-briefcase" style="color: var(--text-muted); width: 30px;"></i> <strong>4 Operacionais:</strong> CS, Sanches, Tráfego, Onboarding.</li>
+                    <li style="margin-bottom: 20px;"><i class="fa-solid fa-box-archive" style="color: var(--text-muted); width: 30px;"></i> <strong>4 Concluídos:</strong> Arquivo histórico para cada setor.</li>
+                    <li style="margin-bottom: 20px;"><i class="fa-solid fa-chart-pie" style="color: var(--text-muted); width: 30px;"></i> <strong>1 Dashboard:</strong> Visão do Gerente Superior.</li>
+                </ul>
+            </div>
+            <div class="card" style="text-align: left; padding: 40px; justify-content: flex-start;">
+                <h3 style="color: white; margin-bottom: 20px;"><i class="fa-solid fa-microchip highlight"></i> Tecnologia Base</h3>
+                <p style="margin-bottom: 15px;">• Trello Standard</p>
+                <p style="margin-bottom: 15px;">• Card Mirroring (Sincronização)</p>
+                <p style="margin-bottom: 15px;">• Custom Fields (Campos Personalizados)</p>
+                <p>• Automações Butler</p>
+            </div>
+        </div>
+        <div class="slide-number">03</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 04: QUADRO CS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-headset"></i> Quadro CS (Operacional)</h2>
+        <div class="grid-cards grid-3" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card"><i class="fa-solid fa-users"></i><h3>Acessos</h3><p>Equipe de CS, Sanches, Líderes e Gerente Superior.</p></div>
+            <div class="card"><i class="fa-solid fa-bullseye"></i><h3>Função</h3><p>Gerar demandas qualificadas para os próximos setores.</p></div>
+            <div class="card"><i class="fa-solid fa-shield-halved"></i><h3>Benefício</h3><p>Ambiente focado, sem interferências externas.</p></div>
+        </div>
+        <div class="slide-number">04</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 05: QUADRO CS CONCLUÍDOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-check-double"></i> Quadro CS - Concluídos</h2>
+        <div class="grid-cards grid-3" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card"><i class="fa-solid fa-key"></i><h3>Acessos</h3><p>Equipe CS e Líderes do Setor.</p></div>
+            <div class="card"><i class="fa-solid fa-server"></i><h3>Função</h3><p>Arquivo histórico centralizado de demandas geradas.</p></div>
+            <div class="card"><i class="fa-solid fa-broom"></i><h3>Benefício</h3><p>Quadro operacional limpo e organizado.</p></div>
+        </div>
+        <div class="slide-number">05</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 06: QUADRO SANCHES -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-filter"></i> Quadro Sanches (Filtro de Qualidade)</h2>
+        <div class="two-cols">
+            <div>
+                <p style="margin-bottom: 20px;"><strong>Acessos:</strong> Sanches, Líderes e CS.</p>
+                <p style="margin-bottom: 20px;"><strong>Função:</strong> Atuar como "pedágio" de qualidade para validar demandas antes do Tráfego.</p>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 10px;"><i class="fa-solid fa-check highlight"></i> Identifica padrões de erros.</li>
+                    <li style="margin-bottom: 10px;"><i class="fa-solid fa-check highlight"></i> Gera feedback para o CS.</li>
+                    <li style="margin-bottom: 10px;"><i class="fa-solid fa-check highlight"></i> Escalabilidade: Preparado para virar equipe dedicada.</li>
+                </ul>
+            </div>
+            <div class="image-box">
+                <!-- Imagem de Quadro Kanban com Cards Distribuidos -->
+                <img src="/img/WhatsApp Image 2026-07-16 at 22.12.49.jpeg" alt="Quadro Kanban com Cards">
+            </div>
+        </div>
+        <div class="slide-number">06</div>
+       <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 07: QUADRO SANCHES CONCLUÍDOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-check-double"></i> Quadro Sanches - Concluídos</h2>
+        <div class="grid-cards grid-2" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card"><i class="fa-solid fa-key"></i><h3>Acessos</h3><p>Sanches e Líderes.</p></div>
+            <div class="card"><i class="fa-solid fa-bolt"></i><h3>Eficiência</h3><p>Cards resolvidos diretamente pelo filtro sem precisar ir para o operacional.</p></div>
+        </div>
+        <div class="slide-number">07</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 08: QUADRO TRÁFEGO PAGO -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-money-bill-trend-up"></i> Quadro Tráfego Pago (Operacional)</h2>
+        <div class="grid-cards grid-2" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card"><i class="fa-solid fa-users-viewfinder"></i><h3>Acessos</h3><p>Equipe de Tráfego, Sanches, Líderes, Gerente e Onboarding.</p></div>
+            <div class="card"><i class="fa-solid fa-rocket"></i><h3>Função</h3><p>Executar tarefas com cards revisados e completos.</p></div>
+        </div>
+        <div class="slide-number">08</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 09: QUADRO TRÁFEGO PAGO CONCLUÍDOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-check-double"></i> Quadro Tráfego Pago - Concluídos</h2>
+        <div class="grid-cards grid-2" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card"><i class="fa-solid fa-key"></i><h3>Acessos</h3><p>Equipe de Tráfego e Líderes.</p></div>
+            <div class="card"><i class="fa-solid fa-chart-column"></i><h3>Função</h3><p>Histórico de entregas e avaliação de performance de campanhas.</p></div>
+        </div>
+        <div class="slide-number">09</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 10: QUADRO ONBOARDING -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-door-open"></i> Quadro Onboarding (Operacional)</h2>
+        <div class="grid-cards grid-2" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card"><i class="fa-solid fa-users"></i><h3>Acessos</h3><p>Equipe Onboarding, Líderes e Gerente.</p></div>
+            <div class="card"><i class="fa-solid fa-handshake"></i><h3>Função</h3><p>Gerenciar a entrada e configuração inicial de novos clientes.</p></div>
+        </div>
+        <div class="slide-number">10</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 11: QUADRO ONBOARDING CONCLUÍDOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-check-double"></i> Quadro Onboarding - Concluídos</h2>
+        <div class="grid-cards grid-2" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card"><i class="fa-solid fa-key"></i><h3>Acessos</h3><p>Equipe Onboarding e Líderes.</p></div>
+            <div class="card"><i class="fa-solid fa-address-book"></i><h3>Função</h3><p>Registro e visibilidade do funil de clientes onboardados com sucesso.</p></div>
+        </div>
+        <div class="slide-number">11</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 12: DASHBOARD DO GERENTE -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-gauge-high"></i> Dashboard do Gerente Superior</h2>
+        <div class="two-cols">
+            <div>
+                <p style="margin-bottom: 20px;"><strong>Acessos:</strong> Líderes e Gerente Superior.</p>
+                <p style="margin-bottom: 20px;"><strong>O que é:</strong> Um quadro <span class="highlight">nativo do Trello</span> (Workspace Table) espelhando todos os setores.</p>
+                <p><strong>Função:</strong> Quadro executivo nativo do Trello espelhando todos os setores. Visão 360 graus da operação sem precisar navegar individualmente.</p>
+            </div>
+            <div class="image-box">
+                <!-- Imagem Dashboard do Trello/Graficos -->
+                <img src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&q=80&w=800" alt="Dashboard e Gráficos de Dados">
+            </div>
+        </div>
+        <div class="slide-number">12</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 13: FLUXO DE TRABALHO -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Fluxo de Trabalho Operacional</h2>
+        
+        <div class="flow-container">
+            <div class="flow-step">Onboarding</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
+            <div class="flow-step">Tráfego Pago</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
+            <div class="flow-step">CS</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
+            <div class="flow-step">Sanches</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
+            <div class="flow-step">Tráfego Pago</div>
+        </div>
+
+        <div style="margin-top: clamp(20px, 5vw, 50px); text-align: center; padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-element);">
+            <p><i class="fa-solid fa-circle-info highlight"></i> <strong>Nota:</strong> Todos os setores enviam demandas finalizadas para seus quadros de <strong>"Concluídos"</strong> e os dados convergem no <strong>"Dashboard do Gerente"</strong>.</p>
+        </div>
+        <div class="slide-number">13</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 14: MECANISMOS DE TRÂNSITO -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-random"></i> Mecanismos de Trânsito</h2>
+        <div style="display: flex; flex-grow: 1; align-items: center; justify-content: center;">
+            <div class="card" style="border-color: var(--lazari-red); max-width: 600px; padding: 40px;">
+                <div class="tag-red">MECANISMO ÚNICO E RECOMENDADO</div>
+                <i class="fa-solid fa-clone" style="display: block; font-size: 50px;"></i>
+                <h3 style="color: white; font-size: 32px;">Card Mirroring</h3>
+                <p style="margin-top: 20px; font-size: 16px;">Sincronização em tempo real. Mantém histórico, anexos e comentários atualizados em todas as vias de forma simultânea. Centraliza a informação e evita qualquer risco de dados dessincronizados na operação e nos históricos.</p>
+            </div>
+        </div>
+        <div class="slide-number">14</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 15: MATRIZ DE ACESSOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-table"></i> Matriz de Acessos</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Equipe / Perfil</th>
+                        <th>CS (Op)</th>
+                        <th>Sanches (Op)</th>
+                        <th>Tráfego (Op)</th>
+                        <th>Onboarding (Op)</th>
+                        <th>Quadros Concluídos</th>
+                        <th>Dashboard</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Equipe CS</strong></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                        <td><i class="fa-solid fa-eye" style="color: var(--text-muted);"></i> (Apenas CS)</td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sanches / Luiz</strong></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i> (Respectivos)</td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Onboarding</strong></td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i> (Respectivos)</td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Equipe Tráfego</strong></td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                        <td><i class="fa-solid fa-eye" style="color: var(--text-muted);"></i> (Apenas Tráfego)</td>
+                        <td style="color: var(--lazari-red);"><i class="fa-solid fa-xmark"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Líderes</strong></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i> (TODOS)</td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Gerente Superior</strong></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i> (TODOS)</td>
+                        <td style="color: var(--accent-green);"><i class="fa-solid fa-check"></i></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">15</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 16: CUSTOM FIELDS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-passport"></i> Custom Fields (Passaporte Obrigatório)</h2>
+        <div class="grid-cards grid-3" style="margin-top: clamp(20px, 5vw, 40px);">
+            <div class="card"><h3>Setor de Origem</h3><p>Dropdown (Menu Suspenso)</p></div>
+            <div class="card"><h3>Tipo de Demanda</h3><p>Dropdown (Menu Suspenso)</p></div>
+            <div class="card"><h3>Prioridade</h3><p>Dropdown (Menu Suspenso)</p></div>
+            <div class="card"><h3>Status de Revisão</h3><p>Checkbox</p></div>
+            <div class="card"><h3>Prazo</h3><p>Campo de Data (Automático via Butler)</p></div>
+            <div class="card"><h3>Setor de Conclusão</h3><p>Dropdown (Menu Suspenso)</p></div>
+        </div>
+        <div class="slide-number">16</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 17: LISTAS DE HANDOFF -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-robot"></i> Listas de Handoff Automáticas</h2>
+        <div class="two-cols" style="margin-top: clamp(20px, 5vw, 40px);">
+            <div class="card" style="text-align: left; padding: 30px;">
+                <h3 style="color: white; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Lista: "Pronto para Próximo"</h3>
+                <p>Gatilho que espelha automaticamente o card no quadro de destino da demanda.</p>
+            </div>
+            <div class="card" style="text-align: left; padding: 30px;">
+                <h3 style="color: white; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">Lista: "Enviar ao Histórico"</h3>
+                <p>Gatilho que espelha o card no quadro de concluídos e o arquiva no quadro operacional original.</p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: clamp(20px, 5vw, 40px);">
+            <h3 class="highlight"><i class="fa-solid fa-star"></i> Benefício Principal</h3>
+            <p>Elimina o trânsito manual de cards e previne esquecimentos e erros humanos na operação.</p>
+        </div>
+        <div class="slide-number">17</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 18: DEVOLUÇÃO -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-reply"></i> Mecanismo de Devolução</h2>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1;">
+            <div style="background-color: var(--lazari-red); color: white; padding: 15px 40px; border-radius: 30px; font-size: clamp(18px, 4vw, 24px); font-weight: bold; margin-bottom: 40px; box-shadow: 0 10px 20px rgba(211,47,47,0.3); text-align: center;">
+                <i class="fa-solid fa-tag"></i> ETIQUETA: DEVOLVER AO CS
+            </div>
+            <p style="padding: 0 20px 20px 20px;">Experimental: Tentarei implementar algo nesse sentido</p>
+
+
+
+            <div class="grid-cards grid-3">
+                <div class="card"><i class="fa-solid fa-bell"></i><h3>Ação 1</h3><p>Notifica o membro original responsável.</p></div>
+                <div class="card"><i class="fa-solid fa-comment-dots"></i><h3>Ação 2</h3><p>Pede ajustes e complementos via comentário automatizado.</p></div>
+                <div class="card"><i class="fa-solid fa-chart-pie"></i><h3>Ação 3</h3><p>Mantém o histórico de falha intacto para métricas de qualidade.</p></div>
+            </div>
+        </div>
+        <div class="slide-number">18</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 19: RELATÓRIOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-chart-bar"></i> Relatórios Automáticos</h2>
+        <div class="grid-cards grid-3" style="margin-top: clamp(20px, 5vw, 50px);">
+            <div class="card">
+                <i class="fa-regular fa-calendar-check"></i>
+                <h3>Semanal</h3>
+                <p>Toda segunda-feira às 9h: Geração do volume de cards concluídos no setor.</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-calendar-days"></i>
+                <h3>Mensal</h3>
+                <p>Todo dia 1º: Visão macro de performance, produtividade e fechamento.</p>
+            </div>
+            <div class="card">
+                <i class="fa-solid fa-triangle-exclamation" style="color: #ff9800;"></i>
+                <h3>Gargalos</h3>
+                <p>Gatilho ativado por tempo: Alerta de inatividade ou atraso em listas nos setores.</p>
+            </div>
+        </div>
+        <div class="slide-number">19</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 20: ARQUIVAMENTO -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-box-archive"></i> Arquivamento Inteligente</h2>
+        <div class="two-cols">
+            <div>
+                <h3 style="color: var(--lazari-red); font-size: 28px;">Regra de 90 Dias</h3>
+                <p style="margin-bottom: 20px;">Após 90 dias inativos nos quadros de Concluídos, o Butler move o card para a lista "Arquivo Histórico".</p>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 10px;"><i class="fa-solid fa-eye-slash highlight"></i> <strong>Limpeza Visual:</strong> Feature de listas ocultas do Trello.</li>
+                    <li style="margin-bottom: 10px;"><i class="fa-solid fa-database highlight"></i> <strong>Preservação:</strong> Total retenção de dados originais para auditorias.</li>
+                </ul>
+            </div>
+            <div class="image-box">
+                <!-- Imagem Banco de Dados/Server -->
+                <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=800" alt="Banco de Dados e Servidores">
+            </div>
+        </div>
+        <div class="slide-number">20</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 21: AUTOMAÇÕES CS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-bolt"></i> Automações: Quadro CS</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Gatilho</th>
+                        <th>Ação do Butler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>1. Card Criado</strong></td><td>Adiciona Checklist ("Informações Obrigatórias")</td></tr>
+                    <tr><td><strong>2. Card Criado</strong></td><td>Define Prazo para + 3 dias</td></tr>
+                    <tr><td><strong>3. Move p/ "Filtro"</strong></td><td>Aplica Etiqueta Amarela (Notifica Sanches)</td></tr>
+                    <tr><td><strong>4. Prazo - 2 dias</strong></td><td>Alerta Antecipado (Notifica Membro)</td></tr>
+                    <tr><td><strong>5. Move p/ "Histórico"</strong></td><td>Espelha no quadro de Concluídos do CS</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">21</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 22: AUTOMAÇÕES SANCHES -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-bolt"></i> Automações: Quadro Sanches</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Gatilho</th>
+                        <th>Ação do Butler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>1. Card Recebido</strong></td><td>Adiciona Checklist de Qualidade</td></tr>
+                    <tr><td><strong>2. Checklist 100%</strong></td><td>Move para a lista "Pronto"</td></tr>
+                    <tr><td><strong>3. Move p/ "Pronto"</strong></td><td>Espelha automaticamente no quadro de Tráfego</td></tr>
+                    <tr><td><strong>4. Etiqueta Vermelha</strong></td><td>Aciona Devolução (Notifica Origem do CS)</td></tr>
+                    <tr><td><strong>5. Segunda às 8h</strong></td><td>Gera Relatório Automático de Erros</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">22</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 23: AUTOMAÇÕES TRÁFEGO -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-bolt"></i> Automações: Tráfego Pago</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Gatilho</th>
+                        <th>Ação do Butler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>1. Card Recebido</strong></td><td>Aplica Etiqueta "Aguardando"</td></tr>
+                    <tr><td><strong>2. Membro Atribuído</strong></td><td>Atualiza Prazo para + 5 dias</td></tr>
+                    <tr><td><strong>3. Tarefa Finalizada</strong></td><td>Espelha no quadro de Concluídos do Tráfego</td></tr>
+                    <tr><td><strong>4. Tarefa Finalizada</strong></td><td>Espelha automaticamente no quadro de Onboarding</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">23</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 24: AUTOMAÇÕES ONBOARDING -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-bolt"></i> Automações: Onboarding</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Gatilho</th>
+                        <th>Ação do Butler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>1. Card Recebido</strong></td><td>Adiciona Checklist de Etapas de Onboarding</td></tr>
+                    <tr><td><strong>2. Checklist 100%</strong></td><td>Espelha no quadro de Concluídos do Onboarding</td></tr>
+                    <tr><td><strong>3. Prazo - 3 dias</strong></td><td>Alerta Antecipado de Vencimento</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">24</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 25: AUTOMAÇÕES CONCLUÍDOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-bolt"></i> Automações: Concluídos (Todos os Setores)</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Gatilho</th>
+                        <th>Ação do Butler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>1. Espelhamento (Entrada)</strong></td><td>Identifica o Setor de Origem</td></tr>
+                    <tr><td><strong>2. Entrada no Quadro</strong></td><td>Preenche Data Automática de Conclusão (Data de Hoje)</td></tr>
+                    <tr><td><strong>3. Inatividade (90 dias)</strong></td><td>Arquiva o card (Regra de Limpeza de 90d)</td></tr>
+                    <tr><td><strong>4. Mensal</strong></td><td>Gera Relatório Consolidado de Produtividade</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="slide-number">25</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 26: CROSS-BOARD -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-network-wired"></i> Automação Global (Cross-Board)</h2>
+        <div style="text-align: center; margin-top: clamp(20px, 5vw, 40px);">
+            <i class="fa-solid fa-arrows-spin" style="font-size: 60px; color: var(--lazari-red); margin-bottom: 20px;"></i>
+            <h3 style="font-size: clamp(22px, 4vw, 28px); margin-bottom: 20px;">Sincronização Reversa</h3>
+            <p style="font-size: clamp(16px, 3vw, 20px); max-width: 900px; margin: 0 auto; line-height: 1.8;">
+                Quando o filtro Sanches devolve um card, o Butler volta ao quadro original (CS) e adiciona um comentário diretamente lá.
+            </p>
+            <div style="background-color: rgba(255,255,255,0.05); padding: 25px; border-radius: 8px; border-left: 5px solid var(--lazari-red); margin: 40px auto 0; max-width: 800px;">
+                <p><i class="fa-solid fa-check highlight"></i> <strong>O Benefício:</strong> O CS é avisado no próprio ambiente de trabalho, eliminando a necessidade de monitorar quadros externos.</p>
+            </div>
+        </div>
+        <div class="slide-number">26</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 27: BENEFÍCIOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-star"></i> Benefícios Esperados</h2>
+        <div class="grid-cards grid-5" style="gap: 15px; margin-top: clamp(20px, 5vw, 40px);">
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Fim de Gargalos</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Qualidade do CS</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Feedback Direto</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Escalabilidade</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Padronização</h3></div>
+            
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Menos Estresse</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Checkup Fácil</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Quadros Limpos</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Base de Dados</h3></div>
+            <div class="card" style="padding: 20px 10px;"><i class="fa-solid fa-circle-check" style="color: var(--accent-green);"></i><h3>Rastreabilidade</h3></div>
+        </div>
+        <div class="slide-number">27</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+    <!-- SLIDE 28: PRÓXIMOS PASSOS -->
+    <div class="slide">
+        <h2 class="slide-title"><i class="fa-solid fa-shoe-prints"></i> Próximos Passos para Implementação</h2>
+        <div class="two-cols" style="align-items: start; margin-top: clamp(20px, 5vw, 30px);">
+            <ul class="numbered-list">
+                <li>Criar os 9 quadros no Workspace.</li>
+                <li>Configurar as permissões da matriz de acessos.</li>
+                <li>Definir Custom Fields nos templates.</li>
+                <li>Implementar as 25 automações via Butler.</li>
+                <li>Treinar as equipes no novo fluxo operacional.</li>
+                <li>Acompanhar e ajustar durante as Semanas 1 a 4.</li>
+            </ul>
+            <div class="image-box" style="height: 100%; min-height: 250px; border-color: var(--lazari-red);">
+                <!-- Imagem Equipe / Planejamento -->
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800" alt="Equipe de Planejamento">
+            </div>
+        </div>
+        <div class="slide-number">28</div>
+        <div class="watermark"><img src="/img/lazari.png" alt="Logo"></div>
+    </div>
+
+</body>
+</html>
