@@ -229,11 +229,8 @@
         body.presentation-mode {
             padding: 0 !important; 
             gap: 0 !important;
-            overflow-y: auto; /* A rolagem acontece aqui no body */
             height: 100vh;
-            scroll-snap-type: y mandatory;
-            scrollbar-width: none;
-            overscroll-behavior: contain;
+            overflow-y: hidden; /* O body não rola mais, o slide rola */
         }
         body.presentation-mode::-webkit-scrollbar {
             display: none;
@@ -241,20 +238,35 @@
 
         /* O Slide mantém seu design original, apenas centralizamos no scroll */
        body.presentation-mode .slide {
-    scroll-snap-align: start; /* Ancoragem no início de cada slide */
-    scroll-snap-stop: always;
-    margin: 0 !important;
-    width: 100vw;
-    min-height: 100vh; /* Ocupa pelo menos a tela toda */
-    height: auto;      /* Permite expansão se o conteúdo exceder 100vh */
-    border-radius: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Alinha conteúdo no topo para facilitar a leitura */
-    padding: 40px 20px 80px 20px !important; /* Espaçamento adequado para mobile */
-    box-shadow: none !important;
-    overflow-y: visible; /* Garante que o conteúdo role com a página */
-}
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto; /* Rolagem interna ativada */
+            display: none; /* Escondidos por padrão */
+            padding: 60px 20px 100px 20px !important;
+            border-radius: 0;
+            box-shadow: none !important;
+        }
+
+        body.presentation-mode .slide.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            justify-content: space-between;
+            z-index: 3000;
+        }
+
+        body.presentation-mode .mobile-nav {
+            display: flex;
+        }
         /* Esconde os botões antigos e mostra o X */
         body.presentation-mode .action-buttons {
             display: none; 
