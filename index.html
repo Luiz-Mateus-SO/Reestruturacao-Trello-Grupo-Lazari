@@ -229,12 +229,11 @@
         body.presentation-mode {
             padding: 0 !important; 
             gap: 0 !important;
-            overflow-y: auto;
+            overflow-y: auto; /* A rolagem acontece aqui no body */
             height: 100vh;
             scroll-snap-type: y mandatory;
             scrollbar-width: none;
-            /* Adiciona suavidade na rolagem e evita que o scroll escape */
-            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
         body.presentation-mode::-webkit-scrollbar {
             display: none;
@@ -242,20 +241,28 @@
 
         /* O Slide mantém seu design original, apenas centralizamos no scroll */
        body.presentation-mode .slide {
-    scroll-snap-align: start; /* Ancoragem no início de cada slide */
-    scroll-snap-stop: always;
-    margin: 0 !important;
-    width: 100vw;
-    min-height: 100vh; /* Ocupa pelo menos a tela toda */
-    height: auto;      /* Permite expansão se o conteúdo exceder 100vh */
-    border-radius: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* Alinha conteúdo no topo para facilitar a leitura */
-    padding: 40px 20px 80px 20px !important; /* Espaçamento adequado para mobile */
-    box-shadow: none !important;
-    overflow-y: visible; /* Garante que o conteúdo role com a página */
-}
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            margin: 0 !important;
+            width: 100vw;
+            /* Removemos a altura fixa e usamos min-height para o slide crescer se precisar */
+            min-height: 100vh; 
+            height: auto; 
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* O mais importante: overflow hidden para evitar o segundo scroll */
+            overflow: hidden; 
+            padding: 60px 20px !important;
+            box-shadow: none !important;
+        }
+
+        body.presentation-mode .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr !important; /* Uma coluna só para evitar estouro */
+            gap: 10px !important;
+        }
         /* Esconde os botões antigos e mostra o X */
         body.presentation-mode .action-buttons {
             display: none; 
