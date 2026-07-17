@@ -226,12 +226,14 @@
         }
 
         /* Configuração da Tela Cheia */
-       body.presentation-mode {
-            padding: 0 !important; 
-            gap: 0 !important;
+        body.presentation-mode {
+            padding: 0; 
+            gap: 0;
+            overflow-y: auto;
             height: 100vh;
-            overflow: hidden !important; /* Remove rolagem do body */
-            background-color: var(--bg-body) !important;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            overscroll-behavior: contain; /* Evita que o scroll vaze para fora da página */
         }
         body.presentation-mode::-webkit-scrollbar {
             display: none; /* Chrome/Safari */
@@ -239,22 +241,25 @@
 
         /* O Slide mantém seu design original, apenas centralizamos no scroll */
         body.presentation-mode .slide {
-            display: none !important;
-            position: fixed;
-            top: 0; left: 0;
+            scroll-snap-align: start;
+            margin: 0;
             width: 100vw;
             height: 100vh;
             border-radius: 0;
-            padding: 60px 20px 80px 20px !important;
-            overflow-y: auto; /* Scroll interno apenas se necessário */
-            box-shadow: none !important;
-        }
-
-        body.presentation-mode .slide.active {
-            display: flex !important;
+            display: flex;
             flex-direction: column;
+            overflow-y: auto; /* Permite rolar o conteúdo interno se ele for grande demais */
+            padding: 60px 20px; /* Ajuste para não colar nas bordas */
         }
 
+        body.presentation-mode .grid-cards {
+    grid-template-columns: 1fr !important; /* Força 1 coluna em todos os grids no modo apresentação */
+    gap: 10px !important;
+}
+
+        body.presentation-mode .slide::-webkit-scrollbar {
+    display: none;
+}
         /* Esconde os botões antigos e mostra o X */
         body.presentation-mode .action-buttons {
             display: none; 
