@@ -227,30 +227,35 @@
 
         /* Configuração da Tela Cheia */
         body.presentation-mode {
-            padding: 0; 
-            gap: 0;
+            padding: 0 !important; 
+            gap: 0 !important;
             overflow-y: auto;
             height: 100vh;
             scroll-snap-type: y mandatory;
             scrollbar-width: none;
+            /* Adiciona suavidade na rolagem e evita que o scroll escape */
+            -webkit-overflow-scrolling: touch;
         }
         body.presentation-mode::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
+            display: none;
         }
 
         /* O Slide mantém seu design original, apenas centralizamos no scroll */
-        body.presentation-mode .slide {
-            scroll-snap-align: start; /* Alinha o início do slide ao topo da tela */
-            margin: 0;
-            width: 100vw;
-            height: 100vh; /* Força o slide a ter a altura exata da tela */
-            border-radius: 0; /* Remove bordas arredondadas que quebram o visual full */
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Centraliza conteúdo verticalmente */
-            overflow: hidden; /* Garante que nada saia do slide */
-        }
-
+       body.presentation-mode .slide {
+    scroll-snap-align: start; /* Ancoragem no início de cada slide */
+    scroll-snap-stop: always;
+    margin: 0 !important;
+    width: 100vw;
+    min-height: 100vh; /* Ocupa pelo menos a tela toda */
+    height: auto;      /* Permite expansão se o conteúdo exceder 100vh */
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Alinha conteúdo no topo para facilitar a leitura */
+    padding: 40px 20px 80px 20px !important; /* Espaçamento adequado para mobile */
+    box-shadow: none !important;
+    overflow-y: visible; /* Garante que o conteúdo role com a página */
+}
         /* Esconde os botões antigos e mostra o X */
         body.presentation-mode .action-buttons {
             display: none; 
