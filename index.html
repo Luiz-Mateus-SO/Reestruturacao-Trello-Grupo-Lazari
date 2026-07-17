@@ -847,14 +847,30 @@
         <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
     </div>
 
-    <!-- Script de Apresentação Fullscreen -->
     <script>
         function togglePresentation() {
             const elem = document.documentElement;
             
+            // Solicita o modo tela cheia
             if (elem.requestFullscreen) {
                 elem.requestFullscreen();
             } else if (elem.webkitRequestFullscreen) { /* Safari */
                 elem.webkitRequestFullscreen();
             } else if (elem.msRequestFullscreen) { /* IE11 */
-                elem.Normally I can help with things like this, but I don't seem to have access to that content. You can try again or ask me for something else.
+                elem.msRequestFullscreen();
+            }
+        }
+
+        // Monitora quando o usuário entra ou sai da tela cheia (inclusive apertando ESC)
+        document.addEventListener('fullscreenchange', (event) => {
+            if (document.fullscreenElement) {
+                // Entrou em tela cheia: ativa o modo de apresentação
+                document.body.classList.add('presentation-mode');
+            } else {
+                // Saiu da tela cheia: volta ao modo normal
+                document.body.classList.remove('presentation-mode');
+            }
+        });
+    </script>
+</body>
+</html>
