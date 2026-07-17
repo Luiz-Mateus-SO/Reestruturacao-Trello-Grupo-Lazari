@@ -903,76 +903,148 @@
         <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
     </div>
 
-    <script>
+   <script>
+
         // Função para Entrar no modo apresentação
+
         function togglePresentation() {
+
             const elem = document.documentElement;
+
             if (elem.requestFullscreen) {
+
                 elem.requestFullscreen();
+
             } else if (elem.webkitRequestFullscreen) {
+
                 elem.webkitRequestFullscreen();
+
             } else if (elem.msRequestFullscreen) {
+
                 elem.msRequestFullscreen();
+
             }
+
         }
+
+
 
         // Função para Sair do modo apresentação (clicando no X)
+
         function exitPresentation() {
+
             if (document.exitFullscreen) {
+
                 document.exitFullscreen();
+
             } else if (document.webkitExitFullscreen) {
+
                 document.webkitExitFullscreen();
+
             } else if (document.msExitFullscreen) {
+
                 document.msExitFullscreen();
+
             }
+
         }
 
+
+
         // Evento que escuta as mudanças de tela cheia (ex: apertar ESC)
+
         document.addEventListener('fullscreenchange', () => {
+
             if (document.fullscreenElement) {
+
                 document.body.classList.add('presentation-mode');
+
                 // Centraliza automaticamente o slide atual ou o primeiro ao entrar
+
                 document.querySelector('.slide').scrollIntoView({ block: 'center' });
+
             } else {
+
                 document.body.classList.remove('presentation-mode');
+
             }
+
         });
+
+
 
         // Navegação Mágica pelas Setas do Teclado
+
         document.addEventListener('keydown', (e) => {
+
             // Só executa a ação de setas se estiver no modo apresentação
+
             if (!document.body.classList.contains('presentation-mode')) return;
 
+
+
             const slides = Array.from(document.querySelectorAll('.slide'));
+
             let currentIndex = 0;
+
             let minDistance = Infinity;
 
+
+
             // Encontra matematicamente qual slide está focado no centro da tela no momento
+
             slides.forEach((slide, index) => {
+
                 const rect = slide.getBoundingClientRect();
+
                 const distance = Math.abs((rect.top + rect.height / 2) - (window.innerHeight / 2));
-                
+
+               
+
                 if (distance < minDistance) {
+
                     minDistance = distance;
+
                     currentIndex = index;
+
                 }
+
             });
 
+
+
             // Seta para Baixo ou Direita (Próximo)
+
             if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+
                 e.preventDefault(); // Evita a rolagem padrão do navegador
+
                 if (currentIndex < slides.length - 1) {
+
                     slides[currentIndex + 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+
                 }
-            } 
-            // Seta para Cima ou Esquerda (Anterior)
-            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                e.preventDefault(); 
-                if (currentIndex > 0) {
-                    slides[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+
             }
+
+            // Seta para Cima ou Esquerda (Anterior)
+
+            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+
+                e.preventDefault();
+
+                if (currentIndex > 0) {
+
+                    slides[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                }
+
+            }
+
         });
-    </script>
+
+    </script> 
+
+
 </body>
 </html>
