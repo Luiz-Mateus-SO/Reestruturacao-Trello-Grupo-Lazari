@@ -511,28 +511,36 @@
         <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
     </div>
 
-    <!-- SLIDE 13: FLUXO DE TRABALHO -->
-    <div class="slide">
-        <h2 class="slide-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> Fluxo de Trabalho Operacional</h2>
-        
-        <div class="flow-container">
+    <!-- SLIDE 13: FLUXO DE TRABALHO (ATUALIZADO) -->
+<div class="slide">
+    <h2 class="slide-title"><i class="fa-solid fa-arrows-split-up-and-left"></i> Fluxo de Trabalho Operacional</h2>
+    
+    <div style="margin-top: 20px;">
+        <h3 style="color: var(--lazari-red);">Fase 1: Comercial e Onboarding</h3>
+        <div class="flow-container" style="margin-bottom: 40px;">
+            <div class="flow-step">Closer</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
+            <div class="flow-step">Cliente</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
             <div class="flow-step">Onboarding</div>
-            <i class="fa-solid fa-arrow-right flow-arrow"></i>
-            <div class="flow-step">Tráfego Pago</div>
-            <i class="fa-solid fa-arrow-right flow-arrow"></i>
-            <div class="flow-step">CS</div>
-            <i class="fa-solid fa-arrow-right flow-arrow"></i>
-            <div class="flow-step">Sanches</div>
-            <i class="fa-solid fa-arrow-right flow-arrow"></i>
-            <div class="flow-step">Tráfego Pago</div>
         </div>
 
-        <div style="margin-top: clamp(20px, 5vw, 50px); text-align: center; padding: 20px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-element);">
-            <p><i class="fa-solid fa-circle-info highlight"></i> <strong>Nota:</strong> Todos os setores enviam demandas finalizadas para seus quadros de <strong>"Concluídos"</strong> e os dados convergem no <strong>"Dashboard do Gerente"</strong>.</p>
+        <h3 style="color: var(--lazari-red);">Fase 2: Gestão de Tráfego e CS</h3>
+        <div class="flow-container">
+            <div class="flow-step">CS</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
+            <div class="flow-step" style="background-color: var(--lazari-red);">Sanches (Triagem)</div>
+            <i class="fa-solid fa-arrow-right flow-arrow"></i>
+            <div class="flow-step">Tráfego Pago</div>
         </div>
-        <div class="slide-number">13</div>
-        <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
+        
+        <div style="margin-top: 30px; padding: 15px; border-left: 4px solid var(--lazari-red); background: var(--bg-element);">
+            <p><strong>Nota:</strong> No quadro "Sanches", as demandas são triadas. Operacional básico é resolvido na raiz (Kill-List), enquanto demandas estratégicas seguem para a execução técnica.</p>
+        </div>
     </div>
+    <div class="slide-number">13</div>
+</div>
+
 
     <!-- SLIDE 14: MECANISMOS DE TRÂNSITO -->
     <div class="slide">
@@ -880,43 +888,60 @@
         <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
     </div>
 
-    <!-- SLIDE 28: PRÓXIMOS PASSOS -->
-    <div class="slide">
-        <h2 class="slide-title"><i class="fa-solid fa-shoe-prints"></i> Próximos Passos para Implementação</h2>
-        <div class="two-cols" style="align-items: start; margin-top: clamp(20px, 5vw, 30px);">
-            <ul class="numbered-list">
-                <li>Criar os 9 quadros no Workspace.</li>
-                <li>Configurar as permissões da matriz de acessos.</li>
-                <li>Definir Custom Fields nos templates.</li>
-                <li>Implementar as 25 automações via Butler.</li>
-                <li>Treinar as equipes no novo fluxo operacional.</li>
-                <li>Acompanhar e ajustar durante as Semanas 1 a 4.</li>
-            </ul>
-            <div class="image-box" style="height: 100%; min-height: 250px; border-color: var(--lazari-red);">
-                <!-- Imagem Equipe / Planejamento -->
-                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800" alt="Equipe de Planejamento">
-            </div>
-        </div>
-        <div class="slide-number">28</div>
-        <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
-    </div>
-
-<!-- SLIDE 29: MANUTENÇÃO DO SISTEMA -->
+    <!-- SLIDE 28: IMPACTO OPERACIONAL -->
 <div class="slide">
-    <h2 class="slide-title"><i class="fa-solid fa-clock-rotate-left"></i> Governança de Processos</h2>
+    <h2 class="slide-title"><i class="fa-solid fa-chart-line"></i> Impacto na Operação</h2>
+    <div class="grid-cards grid-2">
+        <div class="card" style="border-color: #555;">
+            <h3>Antes</h3>
+            <p>Fluxo único, sobrecarga de demandas, ausência de triagem, retrabalho frequente e falta de clareza nas responsabilidades.</p>
+        </div>
+        <div class="card" style="border-color: var(--lazari-red);">
+            <h3>Depois</h3>
+            <p>Processo segmentado, triagem ativa na raiz, foco da equipe técnica em alta performance e governança clara das tarefas.</p>
+        </div>
+    </div>
+    <div class="slide-number">28</div>
+</div>
+
+<!-- SLIDE 29: MANUTENÇÃO DO FLUXO -->
+<div class="slide">
+    <h2 class="slide-title"><i class="fa-solid fa-arrows-rotate"></i> Manutenção do Fluxo</h2>
     <div class="two-cols">
         <div>
-            <p style="margin-bottom: 20px;"><strong>Como manter a operação organizada?</strong></p>
-            <p>Mais do que implementar, precisamos garantir que o sistema não se degrade. A operação exige monitoramento constante para evitar que o fluxo volte a ficar desordenado.</p>
+            <p><strong>Nosso compromisso:</strong> A nova estrutura resolve a bagunça, mas o sistema precisa ser mantido.</p>
+            <p style="margin-top: 15px;">O foco é garantir que o fluxo não sofra degradação, ajustando pequenos gargalos assim que surgirem para que a operação se mantenha sempre fluida.</p>
         </div>
         <div class="card" style="border-color: var(--lazari-red);">
             <h3>Sustentabilidade</h3>
-            <p>Acompanhamento diário para identificar novos gargalos, ajustar fluxos e garantir que a equipe não seja afogada novamente.</p>
+            <p>Acompanhamento contínuo para que a equipe não seja afogada novamente em desordem, mantendo o processo sempre simples e funcional.</p>
         </div>
     </div>
     <div class="slide-number">29</div>
     <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
 </div>
+
+
+<!-- SLIDE 30: PRÓXIMOS PASSOS -->
+<div class="slide">
+    <h2 class="slide-title"><i class="fa-solid fa-shoe-prints"></i> Próximos Passos para Implementação</h2>
+    <div class="two-cols" style="align-items: start; margin-top: clamp(20px, 5vw, 30px);">
+        <ul class="numbered-list">
+            <li>Criar os 9 quadros no Workspace[span_6](start_span)[span_6](end_span).</li>
+            <li>Configurar as permissões da matriz de acessos[span_7](start_span)[span_7](end_span).</li>
+            <li>Definir Custom Fields nos templates[span_8](start_span)[span_8](end_span).</li>
+            <li>Implementar as 25 automações via Butler[span_9](start_span)[span_9](end_span).</li>
+            <li>Treinar as equipes no novo fluxo operacional[span_10](start_span)[span_10](end_span).</li>
+            <li>Acompanhar e ajustar durante as Semanas 1 a 4[span_11](start_span)[span_11](end_span).</li>
+        </ul>
+        <div class="image-box" style="height: 100%; min-height: 250px; border-color: var(--lazari-red);">
+            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=800" alt="Equipe de Planejamento">
+        </div>
+    </div>
+    <div class="slide-number">30</div>
+    <div class="watermark"><img src="img/lazari.png" alt="Logo"></div>
+</div>
+
 
 
     <script>
