@@ -229,8 +229,11 @@
         body.presentation-mode {
             padding: 0 !important; 
             gap: 0 !important;
+            overflow-y: auto; /* A rolagem acontece aqui no body */
             height: 100vh;
-            overflow-y: hidden; /* O body não rola mais, o slide rola */
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            overscroll-behavior: contain;
         }
         body.presentation-mode::-webkit-scrollbar {
             display: none;
@@ -238,34 +241,30 @@
 
         /* O Slide mantém seu design original, apenas centralizamos no scroll */
        body.presentation-mode .slide {
-            position: absolute;
-            top: 0; left: 0;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            margin: 0 !important;
             width: 100vw;
-            height: 100vh;
-            overflow-y: auto; /* Rolagem interna ativada */
-            display: none; /* Escondidos por padrão */
-            padding: 60px 20px 100px 20px !important;
+            /* Mantém a altura mínima de tela cheia */
+            min-height: 100vh;
+            height: auto;
             border-radius: 0;
-            box-shadow: none !important;
-        }
-
-        body.presentation-mode .slide.active {
             display: flex;
             flex-direction: column;
+            /* Removemos o centralizar vertical para evitar cortes */
+            justify-content: flex-start;
+            /* Mantém o conteúdo visível */
+            overflow: visible;
+            padding: 60px 20px 40px 20px !important;
+            box-shadow: none !important;
+            /* Define o posicionamento relativo para conter elementos dentro */
+            position: relative;
         }
 
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            justify-content: space-between;
-            z-index: 3000;
-        }
-
-        body.presentation-mode .mobile-nav {
-            display: flex;
+        body.presentation-mode .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr !important; /* Uma coluna só para evitar estouro */
+            gap: 10px !important;
         }
         /* Esconde os botões antigos e mostra o X */
         body.presentation-mode .action-buttons {
