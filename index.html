@@ -227,35 +227,39 @@
 
         /* Configuração da Tela Cheia */
         body.presentation-mode {
-            background-color: var(--bg-body) !important;
-            overflow: hidden !important; /* Remove o scroll do body para controlar manualmente */
-            padding: 0 !important;
+            padding: 0; 
+            gap: 0;
+            overflow-y: auto;
+            height: 100vh;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            overscroll-behavior: contain; /* Evita que o scroll vaze para fora da página */
         }
         body.presentation-mode::-webkit-scrollbar {
-            display: none;
+            display: none; /* Chrome/Safari */
         }
 
         /* O Slide mantém seu design original, apenas centralizamos no scroll */
-      body.presentation-mode .slide {
-        display: none !important; /* Esconde todos */
-        position: fixed !important;
-        top: 0; left: 0;
-        width: 100vw;
-        height: 100vh;
-        padding: 40px 20px !important;
-        overflow-y: auto; /* Permite scroll interno se o conteúdo for longo */
-        border-radius: 0 !important;
-        box-shadow: none !important;
-    }
-        body.presentation-mode .slide.active {
-        display: flex !important; /* Mostra apenas o ativo */
-    }
+        body.presentation-mode .slide {
+            scroll-snap-align: start;
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Permite rolar o conteúdo interno se ele for grande demais */
+            padding: 60px 20px; /* Ajuste para não colar nas bordas */
+        }
 
         body.presentation-mode .grid-cards {
-            display: grid;
-            grid-template-columns: 1fr !important; /* Uma coluna só para evitar estouro */
-            gap: 10px !important;
-        }
+    grid-template-columns: 1fr !important; /* Força 1 coluna em todos os grids no modo apresentação */
+    gap: 10px !important;
+}
+
+        body.presentation-mode .slide::-webkit-scrollbar {
+    display: none;
+}
         /* Esconde os botões antigos e mostra o X */
         body.presentation-mode .action-buttons {
             display: none; 
@@ -893,43 +897,75 @@
     </div>
 
     <script>
-    let currentSlide = 0;
-    const slides = Array.from(document.querySelectorAll('.slide'));
+        // Função para Entrar no modo apresentação
+        function togglePresentation() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) {
+                elem.msRequestFullscreen();
+            }
+        }
 
-    function showSlide(index) {
-        slides.forEach((s, i) => {
-            s.classList.toggle('active', i === index);
+        // Função para Sair do modo apresentação (clicando no X)
+        function exitPresentation() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+
+        // Evento que escuta as mudanças de tela cheia (ex: apertar ESC)
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                document.body.classList.add('presentation-mode');
+                // Centraliza automaticamente o slide atual ou o primeiro ao entrar
+                document.querySelector('.slide').scrollIntoView({ block: 'center' });
+            } else {
+                document.body.classList.remove('presentation-mode');
+            }
         });
-        slides[index].scrollTop = 0; // Reseta scroll ao mudar
-    }
 
-    // Ao entrar em fullscreen
-    document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-            document.body.classList.add('presentation-mode');
-            currentSlide = 0;
-            showSlide(0);
-        } else {
-            document.body.classList.remove('presentation-mode');
-        }
-    });
+        // Navegação Mágica pelas Setas do Teclado
+        document.addEventListener('keydown', (e) => {
+            // Só executa a ação de setas se estiver no modo apresentação
+            if (!document.body.classList.contains('presentation-mode')) return;
 
-    // Teclas para navegar
-    document.addEventListener('keydown', (e) => {
-        if (!document.body.classList.contains('presentation-mode')) return;
-        
-        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-            if (currentSlide < slides.length - 1) {
-                currentSlide++;
-                showSlide(currentSlide);
+            const slides = Array.from(document.querySelectorAll('.slide'));
+            let currentIndex = 0;
+            let minDistance = Infinity;
+
+            // Encontra matematicamente qual slide está focado no centro da tela no momento
+            slides.forEach((slide, index) => {
+                const rect = slide.getBoundingClientRect();
+                const distance = Math.abs((rect.top + rect.height / 2) - (window.innerHeight / 2));
+                
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    currentIndex = index;
+                }
+            });
+
+            // Seta para Baixo ou Direita (Próximo)
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault(); // Evita a rolagem padrão do navegador
+                if (currentIndex < slides.length - 1) {
+                    slides[currentIndex + 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            } 
+            // Seta para Cima ou Esquerda (Anterior)
+            else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault(); 
+                if (currentIndex > 0) {
+                    slides[currentIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
-        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-            if (currentSlide > 0) {
-                currentSlide--;
-                showSlide(currentSlide);
-            }
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
