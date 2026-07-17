@@ -245,17 +245,20 @@
             scroll-snap-stop: always;
             margin: 0 !important;
             width: 100vw;
-            /* Removemos a altura fixa e usamos min-height para o slide crescer se precisar */
-            min-height: 100vh; 
-            height: auto; 
+            /* Mantém a altura mínima de tela cheia */
+            min-height: 100vh;
+            height: auto;
             border-radius: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            /* O mais importante: overflow hidden para evitar o segundo scroll */
-            overflow: hidden; 
-            padding: 60px 20px !important;
+            /* Removemos o centralizar vertical para evitar cortes */
+            justify-content: flex-start;
+            /* Mantém o conteúdo visível */
+            overflow: visible;
+            padding: 60px 20px 40px 20px !important;
             box-shadow: none !important;
+            /* Define o posicionamento relativo para conter elementos dentro */
+            position: relative;
         }
 
         body.presentation-mode .grid-cards {
